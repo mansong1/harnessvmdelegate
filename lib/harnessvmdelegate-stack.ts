@@ -5,17 +5,13 @@ import * as fs from 'fs';
 
 import { Construct } from 'constructs';
 
-require('dotenv').config();
-
-const { AWS_ACCOUNT_ID, AWS_REGION } = process.env;
-
 export class HarnessvmdelegateStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, { ...props, env: { account: AWS_ACCOUNT_ID, region: AWS_REGION } });
+    super(scope, id, { ...props, env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION } });
 
-    const defaultVpc = ec2.Vpc.fromLookup(scope, 'VPC', { isDefault: true });
+    const vpc = ec2.Vpc.fromLookup(this, 'VPC', { isDefault: true });
 
-    const role = new iam.Role(scope, 'HarnessVMDelegateRole', {
+    const role = new iam.Role(this, 'HarnessVMDelegateRole', {
       assumedBy: new iam.CompositePrincipal(
         new iam.ServicePrincipal('ec2.amazonaws.com'),
         new iam.ServicePrincipal('ssm.amazonaws.com')
@@ -30,7 +26,7 @@ export class HarnessvmdelegateStack extends cdk.Stack {
       this,
       'HarnessVMDelegateSecurityGroup',
       {
-        vpc: defaultVpc,
+        vpc: vpc,
         allowAllOutbound: true,
         description: 'Harness VM Delegate Security Group',
         securityGroupName: 'HarnessVMDelegateSecurityGroup',
@@ -55,7 +51,7 @@ export class HarnessvmdelegateStack extends cdk.Stack {
     );
 
     const instance = new ec2.Instance(this, 'HarnessVMDelegateInstance', {
-      vpc: defaultVpc,
+      vpc: vpc,
       role: role,
       securityGroup: securityGroup,
       instanceName: 'HarnessVMDelegateInstance',
