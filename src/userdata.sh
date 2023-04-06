@@ -13,4 +13,4 @@ sudo chmod +x /usr/local/bin/docker-compose
 export PATH=$PATH:/usr/local/bin/docker-compose
 docker-compose version
 
-mkdir /runner
+mkdir -p /runner
