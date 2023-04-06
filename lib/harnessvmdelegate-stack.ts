@@ -19,6 +19,7 @@ export class HarnessvmdelegateStack extends cdk.Stack {
       managedPolicies: [
         // allows us to access instance via SSH using IAM and SSM
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2FullAccess'),
       ],
     });
 
