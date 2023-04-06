@@ -70,6 +70,5 @@ export class HarnessvmdelegateStack extends cdk.Stack {
     );
 
     new cdk.CfnOutput(this, "SSMCommand", { value: `aws ssm start-session --target ${instance.instanceId}` });
-
   }
 }
