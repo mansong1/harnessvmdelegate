@@ -1,0 +1,43 @@
+version: "1"
+instances:
+  - name: linux-pool
+    default: true
+    type: amazon
+    pool: 1
+    limit: 4
+    platform:
+      os: linux
+      arch: amd64
+    spec:
+      account:
+        region: us-east-2
+        availability_zone: us-east-2c
+        access_key_id: XXXXXXXXXXXXXXXXX
+        access_key_secret: XXXXXXXXXXXXXXXXXXX
+        key_pair_name: XXXXX
+      ami: ami-051197ce9cbb023ea
+      size: t2.nano
+      iam_profile_arn: arn:aws:iam::XXXX:instance-profile/XXXXX
+      network:
+        security_groups:
+        - sg-XXXXXXXXXXX
+  - name: windows-pool
+    default: true
+    type: amazon
+    pool: 1
+    limit: 4
+    platform:
+      os: windows
+    spec:
+      account:
+        region: us-east-2
+        availability_zone: us-east-2c
+        access_key_id: XXXXXXXXXXXXXXXXXXXXXX
+        access_key_secret: XXXXXXXXXXXXXXXXXXXXXX
+        key_pair_name: XXXXX
+      ami: ami-088d5094c0da312c0
+      size: t3.large
+      hibernate: true
+      network:
+        security_groups:
+        - sg-XXXXXXXXXXXXXX
