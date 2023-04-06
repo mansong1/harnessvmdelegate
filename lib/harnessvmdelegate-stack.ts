@@ -4,6 +4,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as fs from 'fs';
 
 import { Construct } from 'constructs';
+import { generatePoolTemplate } from './poolTemplate';
 
 export class HarnessvmdelegateStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -65,7 +66,34 @@ export class HarnessvmdelegateStack extends cdk.Stack {
       }),
     });
 
+    const linuxAmi = ec2.MachineImage.lookup({
+      name: 'amzn2-ami-hvm-*',
+      owners: ['amazon'],
+    }).getImage(this).imageId;
+
+    const windowsAmi = ec2.MachineImage.lookup({
+      name: 'Windows_Server-2019-English-Full-Base-*',
+      owners: ['amazon'],
+    }).getImage(this).imageId;
+
+    const poolParams = {
+      linuxAmi: linuxAmi,
+      windowsAmi: windowsAmi,
+      iamProfileArn: role.roleArn,
+      securityGroupLinux: securityGroup.securityGroupId,
+      securityGroupWindows: securityGroup.securityGroupId,
+    };
+
+    const poolContent = generatePoolTemplate(poolParams);
+    const envContent = fs.readFileSync('src/env', 'utf-8');
+    const dockerContent = fs.readFileSync('src/docker-compose.yaml', 'utf-8');
+
     instance.addUserData(
+      `#!/bin/bash`,
+      `mkdir -p /runner`,
+      `echo '${envContent}' > /runner/.env`,
+      `echo '${poolContent}' > /runner/pool.yml`,
+      `echo '${dockerContent}' > /runner/docker-compose.yaml`,
       fs.readFileSync('src/userdata.sh', 'utf-8')
     );
 
