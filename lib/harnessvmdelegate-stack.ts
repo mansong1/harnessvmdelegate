@@ -60,7 +60,7 @@ export class HarnessvmdelegateStack extends cdk.Stack {
         ec2.InstanceSize.LARGE),
       machineImage: ec2.MachineImage.latestAmazonLinux({
         generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2,
-        cpuType: ec2.AmazonLinuxCpuType.ARM_64,
+        cpuType: ec2.AmazonLinuxCpuType.X86_64,
       }),
     });
 
